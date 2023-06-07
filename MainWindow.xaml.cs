@@ -192,8 +192,8 @@ namespace TestAnimation {
                 FillBehavior = FillBehavior.Stop,
                 Duration = new Duration(
                     new TimeSpan((long)((MyCanvas.Width - 100 - startPositionX) * 30000))) // какое-то число для нормальных тиков
-            };
-            myDoubleAnimation.Completed += (o, args) =>  MyStoryboardOnCompleted(ball, myDoubleAnimation);
+            }; 
+            myDoubleAnimation.Completed += (o, args) =>  MakeAnimation(ball);
             Storyboard.SetTarget(myDoubleAnimation, ball.Ball.Shape);
             Storyboard.SetTargetProperty(myDoubleAnimation, new PropertyPath(Canvas.LeftProperty));
             var myStoryboard = new Storyboard
@@ -204,9 +204,5 @@ namespace TestAnimation {
             myStoryboard.Begin();
         }
 
-        private void MyStoryboardOnCompleted(BallMovement ball, DependencyObject myDoubleAnimation)
-        {
-            MakeAnimation(ball);
-        }
     }
 }

@@ -1,0 +1,17 @@
+﻿<Window x:Class="TestAnimation.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestAnimation"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Button Name="ButtonDo" Content="do" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Width="96" Click="ButtonDo_Click"/>
+        <Border x:Name="CanvasBorder" BorderThickness="0,1,0,1">
+            <Canvas Margin="40,35,40,26" Name="MyCanvas"/>
+        </Border>
+
+
+    </Grid>
+</Window>

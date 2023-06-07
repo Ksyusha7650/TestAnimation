@@ -79,37 +79,42 @@ namespace TestAnimation {
             }
         }
     }
-    
+
 
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window {
+    public partial class MainWindow : Window
+    {
         private LambdaCollection<Ellipse> circles;
         private LambdaCollection<Rectangle> channel;
         private const double _height = 300;
         private const double _width = 600;
+
         public class Ball
         {
             public Ellipse Shape { get; set; }
             public Point Position { get; set; }
             public double Radius { get; set; }
             public bool IsDeleted { get; set; }
-            public SolidColorBrush BallColor =  Brushes.DodgerBlue;
+            public SolidColorBrush BallColor = Brushes.DodgerBlue;
         }
+
         public class BallMovement
         {
             public Ball Ball { get; set; }
             public double Speed { get; set; }
         }
+
         private BallMovement[] balls;
 
-        public MainWindow() {
+        public MainWindow()
+        {
             InitializeComponent();
             //InitializeBalls();
             //StartTimer();
-            
+
             const int count = 19;
             MyCanvas.Height = _height;
             MyCanvas.Width = _width;
@@ -128,13 +133,14 @@ namespace TestAnimation {
                 Height = _height
             };
             Canvas.SetLeft(rect, MyCanvas.Width);
-           // Canvas.SetTop(rect,MyCanvas);
-            
+            // Canvas.SetTop(rect,MyCanvas);
+
             var countOfRows = (int)_height / 35;
-            
+
             balls = new BallMovement[count * countOfRows];
             int k = 0;
-            for (int j = 0; j < countOfRows; j++) {
+            for (int j = 0; j < countOfRows; j++)
+            {
                 circles = new LambdaCollection<Ellipse>(count)
                     .WithProperty(WidthProperty, i => 20.0)
                     .WithProperty(HeightProperty, i => 20.0)
@@ -142,9 +148,10 @@ namespace TestAnimation {
                     .WithXY(x => x * 25.0,
                         y => y * 0.0 + j * 35.0 - 23.0);
                 var widthBetween = -50;
-                foreach (var ellipse in circles) {
+                foreach (var ellipse in circles)
+                {
                     //MyCanvas.Children.Add(ellipse);
-     
+
                     balls[k] = new BallMovement()
                     {
                         Ball = new Ball
@@ -160,30 +167,46 @@ namespace TestAnimation {
                     widthBetween += 25;
                     k++;
                 }
-                
+
 
             }
-            
+
         }
-        
+
         private void ButtonDo_Click(object sender, RoutedEventArgs e)
         {
             foreach (var ball in balls)
             {
-                var myDoubleAnimation = new DoubleAnimation
-                {
-                    From = ball.Ball.Position.X,
-                    To = MyCanvas.Width - 100,
-                    Duration = new Duration(new TimeSpan((long)((MyCanvas.Width - 100 - ball.Ball.Position.X) * 10000))) // какое-то число для нормальных тиков
-                };
-                Storyboard.SetTarget(myDoubleAnimation, ball.Ball.Shape);
-                Storyboard.SetTargetProperty(myDoubleAnimation, new PropertyPath(Canvas.LeftProperty));
-                var myStoryboard = new Storyboard();
-                myStoryboard.Children.Add(myDoubleAnimation);
-                myStoryboard.SpeedRatio = ball.Speed / 20;
-                myStoryboard.Begin();
+                MakeAnimation(ball, true);
             }
         }
-        
+
+        private void MakeAnimation(BallMovement ball, bool isStarted = false)
+        {
+            var startPositionX = isStarted ? ball.Ball.Position.X : -25;
+            var myDoubleAnimation = new DoubleAnimation
+            {
+                
+                From = startPositionX,
+                To = MyCanvas.Width - 100,
+                FillBehavior = FillBehavior.Stop,
+                Duration = new Duration(
+                    new TimeSpan((long)((MyCanvas.Width - 100 - startPositionX) * 30000))) // какое-то число для нормальных тиков
+            };
+            myDoubleAnimation.Completed += (o, args) =>  MyStoryboardOnCompleted(ball, myDoubleAnimation);
+            Storyboard.SetTarget(myDoubleAnimation, ball.Ball.Shape);
+            Storyboard.SetTargetProperty(myDoubleAnimation, new PropertyPath(Canvas.LeftProperty));
+            var myStoryboard = new Storyboard
+            {
+                SpeedRatio = ball.Speed / 20
+            };
+            myStoryboard.Children.Add(myDoubleAnimation);
+            myStoryboard.Begin();
+        }
+
+        private void MyStoryboardOnCompleted(BallMovement ball, DependencyObject myDoubleAnimation)
+        {
+            MakeAnimation(ball);
+        }
     }
 }
